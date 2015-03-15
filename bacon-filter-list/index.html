@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="js/jquery-2.1.3.js"></script>
+    <script type="text/javascript" src="js/bacon.js"></script>
+    <script type="text/javascript" src="js/bacon.model.js"></script>
+    <script type="text/javascript" src="js/bacon.jquery.js"></script>
+</head>
+<body>
+    <span>min</span>
+    <input type="text" id="min-price" value=""></input>
+    <span>max</span>
+    <input type="text" id="max-price" value=""></input>
+    <ul class="products"></ul>
+    <script type="text/javascript">
+        var productsFromServer = [
+            {name: "productA", price: 2},
+            {name: "productB", price: 22},
+            {name: "productC", price: 45},
+            {name: "productD", price: 99},
+            {name: "productE", price: 129},
+            {name: "productF", price: 399},
+            {name: "productG", price: 1279}
+        ];
+
+        var minPriceStream = $("#min-price").keyupE();
+        var maxPriceStream = $("#max-price").keyupE();
+        var minAndMaxPrices = minPriceStream.combine(maxPriceStream, function(min, max) {
+            return {
+                min: $(min.target).val(),
+                max: $(max.target).val()
+            };
+        });
+
+        minAndMaxPrices.onValue(function(products, filters) {
+            var filteredProducts = products
+            .filter(priceIsWithinFilterValues(filters))
+            .map(toProductListElement);
+
+            $(".products").empty();
+            $(".products").append(filteredProducts);
+        }, productsFromServer);
+
+        function priceIsWithinFilterValues(filters){
+            return function (product) {
+                return product.price >= filters.min && product.price <= filters.max;
+            }
+        }
+
+        function toProductListElement(product) {
+            return $("<li>", {
+                text: product.name + " " + product.price + "€"
+            });
+        }
+    </script>
+</body>
+</html>
