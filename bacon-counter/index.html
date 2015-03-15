@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="js/jquery-2.1.3.js"></script>
+    <script type="text/javascript" src="js/Bacon.js"></script>
+</head>
+<body>
+    <button id="plus">+</button>
+    <button id="minus">-</button>
+    <div>Total: <span id="total"></span></div>
+    <script type="text/javascript">
+        var plus = $("#plus").asEventStream("click").map(1);
+        var minus = $("#minus").asEventStream("click").map(-1);
+        var both = plus.merge(minus);
+
+        function sum(a, b) {
+            return a + b
+        }
+
+        var counter = both.scan(0, sum);
+        counter.onValue(function(total) {
+          $("#total").text(total);
+        });
+    </script>
+</body>
+</html>
